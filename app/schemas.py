@@ -12,10 +12,12 @@ class CityCreate(CityBase):
 
 class CityRead(CityBase):
     id: int
-
     class Config:
         orm_mode = True
 
+
+class City(CityRead):
+    pass
 
 class TemperatureBase(BaseModel):
     city_id: int
@@ -27,6 +29,7 @@ class TemperatureCreate(TemperatureBase):
 
 class TemperatureRead(TemperatureBase):
     id: int
-
+    date_time: datetime
     class Config:
         orm_mode = True
+
