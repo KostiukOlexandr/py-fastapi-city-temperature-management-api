@@ -14,7 +14,7 @@ class CityRead(CityBase):
     id: int
 
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 
 class TemperatureBase(BaseModel):
@@ -29,4 +29,4 @@ class TemperatureRead(TemperatureBase):
     id: int
 
     class Config:
-        from_attributes = True
+        orm_mode = True

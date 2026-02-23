@@ -2,14 +2,17 @@ from fastapi import APIRouter, Depends, Query, HTTPException, status
 from sqlalchemy.orm import Session
 from datetime import datetime
 import httpx, asyncio
-
 from app import crud, schemas, deps, models
-
 
 router = APIRouter(prefix="/temperatures", tags=["temperatures"])
 
 async def fetch_temp(client: httpx.AsyncClient, city_name: str) -> float:
-    return 5.0
+    api_key = "YOUR_API_KEY"
+    url = f"http://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={api_key}&units=metric"
+    response = await client.get(url)
+    response.raise_for_status()
+    data = response.json()
+    return data["main"]["temp"]
 
 @router.post("/update", response_model=list[schemas.TemperatureRead], status_code=status.HTTP_201_CREATED)
 async def update_temperatures(db: Session = Depends(deps.get_db)):
@@ -37,11 +40,3 @@ async def update_temperatures(db: Session = Depends(deps.get_db)):
         db.refresh(t)
 
     return temps
-
-
-@router.get("/", response_model=list[schemas.TemperatureRead])
-def read_temperatures(
-    city_id: int | None = Query(default=None),
-    db: Session = Depends(deps.get_db)
-):
-    return crud.get_temperatures(db, city_id=city_id)
